@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found | The Dare Challenge</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #121212 0%, #2d3748 100%);
+      color: #f7fafc;
+      min-height: 100vh;
+    }
+    
+    .gradient-border {
+      position: relative;
+      border-radius: 0.5rem;
+      background: #1a202c;
+    }
+    
+    .gradient-border::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ff00cc, #3333ff, #00ccff);
+      z-index: -1;
+      border-radius: 0.6rem;
+      animation: animateGradient 3s linear infinite;
+    }
+    
+    @keyframes animateGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .btn-gradient {
+      background: linear-gradient(90deg, #3333ff, #00ccff);
+      transition: all 0.3s;
+    }
+    
+    .btn-gradient:hover {
+      background: linear-gradient(90deg, #3333ff, #00ccff);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .connect-wallet {
+      background: linear-gradient(90deg, #ff00cc, #3333ff);
+      transition: all 0.3s;
+    }
+    
+    .connect-wallet:hover {
+      background: linear-gradient(90deg, #ff00cc, #3333ff);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .error-animation {
+      animation: floatUpDown 4s ease-in-out infinite;
+    }
+
+    @keyframes floatUpDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="min-h-screen flex flex-col">
+    <header class="py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-700">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center">
+          <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+            The Dare Challenge
+          </h1>
+        </div>
+        <div>
+          <button 
+            class="connect-wallet px-4 py-2 rounded-lg font-medium text-white shadow-lg">
+            Connect Wallet
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+      <div class="gradient-border p-8 max-w-2xl w-full text-center">
+        <div class="error-animation mb-8">
+          <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+            <g fill="none" stroke-width="2">
+              <path d="M100,40 L60,100 L140,100 Z" stroke="url(#grad1)" stroke-width="3" />
+              <text x="100" y="85" font-size="40" text-anchor="middle" fill="#f7fafc" font-weight="bold">404</text>
+              <circle cx="100" cy="130" r="20" stroke="url(#grad1)" stroke-width="3" />
+              <line x1="100" y1="115" x2="100" y2="145" stroke="#f7fafc" stroke-width="3" />
+              <line x1="85" y1="130" x2="115" y2="130" stroke="#f7fafc" stroke-width="3" />
+            </g>
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff00cc;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#3333ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#00ccff;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <h2 class="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+          Dare Not Found!
+        </h2>
+        
+        <p class="text-xl text-gray-300 mb-8">
+          Looks like you've accepted a dare that doesn't exist. The page you're looking for has vanished into the ethereum.
+        </p>
+        
+        <div class="flex justify-center">
+          <a href="index.html" class="btn-gradient px-6 py-3 rounded-lg font-medium text-white shadow-lg">
+            Return to Challenges
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="mt-auto py-8 border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+        <p>The Dare Challenge &copy; 2025</p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

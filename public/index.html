@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Dare Challenge</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+  <div id="app" class="min-h-screen">
+    <header class="py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-700">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center">
+          <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+            The Dare Challenge
+          </h1>
+        </div>
+        <div class="flex space-x-4 items-center">
+          <div id="countdown" class="countdown text-center mr-4 hidden">
+            <div class="text-xs uppercase tracking-wider mb-1">Challenge Ends In</div>
+            <div>
+              <span id="days" class="countdown-number">00</span>d
+              <span id="hours" class="countdown-number">00</span>h
+              <span id="minutes" class="countdown-number">00</span>m
+              <span id="seconds" class="countdown-number">00</span>s
+            </div>
+          </div>
+          <button 
+            id="connectWallet" 
+            class="connect-wallet px-4 py-2 rounded-lg font-medium text-white shadow-lg">
+            Connect Wallet
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Status Alert -->
+      <div id="statusAlert" class="hidden mb-8 rounded-lg p-4 bg-gray-800 border border-gray-700">
+        <p id="statusMessage" class="text-gray-300"></p>
+      </div>
+
+      <!-- Intro Section -->
+      <section class="mb-12 text-center">
+        <h2 class="text-4xl font-bold mb-4">Will Your Dare Win?</h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+          Create a dare with ETH or contribute to the community Mega Dare. 
+          The dare with the most ETH will be completed, or if the Mega Dare threshold is reached, that will be done instead!
+        </p>
+      </section>
+
+      <!-- Main Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Mega Dare Section -->
+        <div class="lg:col-span-1">
+          <div class="gradient-border p-6 h-full">
+            <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">The Mega Dare</h2>
+            
+            <div class="mb-4">
+              <p id="megaDareDescription" class="text-lg mb-4">Loading...</p>
+              
+              <div class="mb-2 flex justify-between">
+                <span class="text-gray-400">Progress</span>
+                <span>
+                  <span id="megaDareAmount">0</span> / 
+                  <span id="megaDareThreshold">0</span> ETH
+                </span>
+              </div>
+              
+              <div class="mega-dare-progress mb-6">
+                <div id="megaDareProgressBar" class="mega-dare-progress-bar" style="width: 0%"></div>
+              </div>
+            </div>
+            
+            <div id="contributeMegaDareForm">
+              <div class="mb-4">
+                <label for="megaDareEthAmount" class="block text-gray-400 mb-2">Contribution Amount (ETH)</label>
+                <input 
+                  type="number" 
+                  id="megaDareEthAmount" 
+                  placeholder="1.0" 
+                  min="0.001" 
+                  step="0.001"
+                  class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                >
+              </div>
+              
+              <button 
+                id="contributeMegaDareButton" 
+                class="btn-gradient w-full px-4 py-3 rounded-lg font-medium text-white shadow-lg disabled:opacity-50"
+                disabled
+              >
+                Contribute to Mega Dare
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Create Dare Section -->
+        <div class="lg:col-span-1">
+          <div class="gradient-border p-6 h-full">
+            <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">Create Your Own Dare</h2>
+            
+            <div id="createDareForm">
+              <div class="mb-4">
+                <label for="dareDescription" class="block text-gray-400 mb-2">Dare Description</label>
+                <textarea 
+                  id="dareDescription"
+                  rows="4"
+                  placeholder="What should be done if your dare wins?"
+                  class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                ></textarea>
+              </div>
+              
+              <div class="mb-4">
+                <label for="dareEthAmount" class="block text-gray-400 mb-2">Dare Amount (ETH)</label>
+                <input 
+                  type="number" 
+                  id="dareEthAmount" 
+                  placeholder="1.0" 
+                  min="0.001" 
+                  step="0.001"
+                  class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                >
+              </div>
+              
+              <button 
+                id="createDareButton" 
+                class="btn-gradient w-full px-4 py-3 rounded-lg font-medium text-white shadow-lg disabled:opacity-50"
+                disabled
+              >
+                Create Dare
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Your Status Section -->
+        <div class="lg:col-span-1">
+          <div class="gradient-border p-6 h-full">
+            <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">Your Status</h2>
+            
+            <div id="notConnected" class="text-center py-8">
+              <p class="text-gray-400 mb-4">Connect your wallet to see your participation status</p>
+              <button 
+                id="connectWalletStatus" 
+                class="connect-wallet px-4 py-2 rounded-lg font-medium text-white shadow-lg">
+                Connect Wallet
+              </button>
+            </div>
+            
+            <div id="connectedStatus" class="hidden">
+              <div id="notParticipated">
+                <p class="text-center py-4 text-xl">You haven't participated yet!</p>
+                <p class="text-gray-400 text-center">Create a dare or contribute to the Mega Dare</p>
+              </div>
+              
+              <div id="hasParticipated" class="hidden">
+                <div id="yourDare" class="mb-6 hidden">
+                  <h3 class="text-xl font-semibold mb-2">Your Dare</h3>
+                  <p id="yourDareDescription" class="text-gray-300 mb-2"></p>
+                  <p class="flex justify-between">
+                    <span class="text-gray-400">Amount:</span>
+                    <span id="yourDareAmount" class="font-semibold"></span>
+                  </p>
+                </div>
+                
+                <div id="yourMegaDare" class="mb-6 hidden">
+                  <h3 class="text-xl font-semibold mb-2">Mega Dare Contribution</h3>
+                  <p class="text-gray-300 mb-2">You contributed to the Mega Dare!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Top Dares Section -->
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold mb-6 text-center">Top Dares</h2>
+        
+        <div id="nodaresMessage" class="text-center py-8 text-gray-400 hidden">
+          No dares have been created yet. Be the first!
+        </div>
+        
+        <div id="daresContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dare cards will be dynamically inserted here -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-16 py-8 border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+        <p>The Dare Challenge &copy; 2025</p>
+      </div>
+    </footer>
+  </div>
+
+  
+</body>
+</html>

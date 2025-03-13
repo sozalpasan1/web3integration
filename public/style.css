@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #121212 0%, #2d3748 100%);
+  color: #f7fafc;
+  min-height: 100vh;
+}
+    
+.gradient-border {
+  position: relative;
+  border-radius: 0.5rem;
+  background: #1a202c;
+}
+    
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff00cc, #3333ff, #00ccff);
+  z-index: -1;
+  border-radius: 0.6rem;
+  animation: animateGradient 3s linear infinite;
+}
+    
+@keyframes animateGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+    
+.btn-gradient {
+  background: linear-gradient(90deg, #3333ff, #00ccff);
+  transition: all 0.3s;
+}
+    
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #3333ff, #00ccff);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+    
+.mega-dare-progress {
+  height: 16px;
+  background: #2d3748;
+  border-radius: 8px;
+  overflow: hidden;
+}
+    
+.mega-dare-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3333ff, #00ccff);
+  border-radius: 8px;
+  transition: width 0.5s ease-in-out;
+}
+    
+.dare-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+    
+.dare-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+    
+.connect-wallet {
+  background: linear-gradient(90deg, #ff00cc, #3333ff);
+  transition: all 0.3s;
+}
+    
+.connect-wallet:hover {
+  background: linear-gradient(90deg, #ff00cc, #3333ff);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.countdown {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  display: inline-block;
+}
+    
+.countdown-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff00cc, #3333ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
