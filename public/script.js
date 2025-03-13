@@ -431,7 +431,9 @@ const contractABI = [
     document.getElementById('megaDareProgressBar').style.width = "0%";
     
     // Start the countdown with 2 minutes
-    endTimeTimestamp = Math.floor(Date.now() / 1000) + 120;
+
+    //inside the parenthesis is days
+    endTimeTimestamp = Math.floor(Date.now() / 1000) + (5) * 86400;
     startCountdown();
     
     // Add some test dares
