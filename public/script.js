@@ -35,7 +35,9 @@ const contractABI = [
     document.getElementById('createDareButton').addEventListener('click', handleCreateDare);
     document.getElementById('contributeMegaDareButton').addEventListener('click', handleContributeToMegaDare);
     
-    // Check if the browser has ethereum provider (MetaMask)
+    //startTestMode();
+    
+    //CHECK IF BROWSER HAS ETH PROVIDER
     if (window.ethereum) {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       
@@ -52,6 +54,15 @@ const contractABI = [
     }
   });
   
+  // ############################################################
+  // ############################################################
+
+  //          Wallet Connection and User Status Functions
+
+  // ############################################################
+  // ############################################################
+
+
   async function connectWallet() {
     try {
       // Request account access
@@ -402,6 +413,70 @@ const contractABI = [
     document.getElementById('connectedStatus').style.display = 'none';
   }
   
+  // ############################################################
+
+
+              //TESTING CODE BELOW
+
+  
+  // ############################################################
+
+
+
+  function startTestMode() {
+    // Set test values
+    document.getElementById('megaDareDescription').textContent = "Test Mega Dare Description";
+    document.getElementById('megaDareAmount').textContent = "0";
+    document.getElementById('megaDareThreshold').textContent = "10";
+    document.getElementById('megaDareProgressBar').style.width = "0%";
+    
+    // Start the countdown with 2 minutes
+    endTimeTimestamp = Math.floor(Date.now() / 1000) + 120;
+    startCountdown();
+    
+    // Add some test dares
+    const daresContainer = document.getElementById('daresContainer');
+    const nodaresMessage = document.getElementById('nodaresMessage');
+    nodaresMessage.classList.add('hidden');
+    
+    // Clear and add test dares
+    daresContainer.innerHTML = '';
+    addTestDare("Do a backflip in the middle of class", "0.5", 0);
+    addTestDare("Sing the national anthem backwards", "0.3", 1);
+    addTestDare("Do a backflip in the middle of class", "0.5", 2);
+    addTestDare("gigile fart", "56", 3);
+    addTestDare("sigma", "99", 4);
+    addTestDare("Sing the national anthem backwards", "0.1", 5);
+  }
+  
+  function addTestDare(description, amount, id) {
+    const daresContainer = document.getElementById('daresContainer');
+    const dareCard = document.createElement('div');
+    dareCard.className = 'dare-card bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700';
+    if (id === 4) {
+      dareCard.className += ' border-2 border-yellow-500';
+    }
+    
+    dareCard.innerHTML = `
+      <div class="flex justify-between items-start mb-4">
+        <span class="bg-gray-700 text-xs font-medium px-2.5 py-0.5 rounded">Dare #${id}</span>
+        ${id === 4 ? '<span class="bg-yellow-500 text-black text-xs font-medium px-2.5 py-0.5 rounded">Leading</span>' : ''}
+      </div>
+      <p class="text-lg mb-4">${description}</p>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-400">Creator</span>
+        <span>0x1234...5678</span>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-gray-400">Amount</span>
+        <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">${amount} ETH</span>
+      </div>
+    `;
+    
+    daresContainer.appendChild(dareCard);
+  }
+
+
   // Listen for account changes
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', handleAccountsChanged);

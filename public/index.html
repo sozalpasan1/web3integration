@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Dare Challenge</title>
+  <title>The Mega Dare</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -15,17 +15,17 @@
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center">
           <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-            The Dare Challenge
+            The Mega Dare
           </h1>
         </div>
         <div class="flex space-x-4 items-center">
           <div id="countdown" class="countdown text-center mr-4 hidden">
             <div class="text-xs uppercase tracking-wider mb-1">Challenge Ends In</div>
             <div>
-              <span id="days" class="countdown-number">00</span>d
-              <span id="hours" class="countdown-number">00</span>h
-              <span id="minutes" class="countdown-number">00</span>m
-              <span id="seconds" class="countdown-number">00</span>s
+              <span id="days" class="countdown-number">00</span>D
+              <span id="hours" class="countdown-number">00</span>H
+              <span id="minutes" class="countdown-number">00</span>M
+              <span id="seconds" class="countdown-number">00</span>S
             </div>
           </div>
           <button 
@@ -47,8 +47,12 @@
       <section class="mb-12 text-center">
         <h2 class="text-4xl font-bold mb-4">Will Your Dare Win?</h2>
         <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-          Create a dare with ETH or contribute to the community Mega Dare. 
-          The dare with the most ETH will be completed, or if the Mega Dare threshold is reached, that will be done instead!
+          Bet Sepolia on your own dare or add to... 
+          <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">The Mega Dare</h2>
+          <strong>I HAVE TO DO WHICHEVER DARE HAS THE MOST ETH!</strong>
+          <br>
+          <br>
+          Scroll down to see the Leaderboard!
         </p>
       </section>
 
@@ -83,7 +87,7 @@
                   id="megaDareEthAmount" 
                   placeholder="1.0" 
                   min="0.001" 
-                  step="0.001"
+                  step="0.05"
                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
               </div>
@@ -122,7 +126,7 @@
                   id="dareEthAmount" 
                   placeholder="1.0" 
                   min="0.001" 
-                  step="0.001"
+                  step="0.05"
                   class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                 >
               </div>
@@ -194,7 +198,7 @@
 
     <footer class="mt-16 py-8 border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-        <p>The Dare Challenge &copy; 2025</p>
+        <p>The Mega Dare Corporation &copy; 2025</p>
       </div>
     </footer>
   </div>
