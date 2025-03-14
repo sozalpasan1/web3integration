@@ -2,17 +2,20 @@
 const contractABI = [
   "function createDare(string description) external payable",
   "function contributeToMegaDare() external payable",
+  "function contributeToExistingDare(uint256 dareId) external payable",
   "function megaDareDescription() external view returns (string)",
   "function megaDareAmount() external view returns (uint256)",
   "function megaDareThreshold() external view returns (uint256)",
   "function endTime() external view returns (uint256)",
   "function dareCount() external view returns (uint256)",
-  "function hasParticipated(address) external view returns (bool)",
+  "function hasCreatedDare(address) external view returns (bool)",
   "function contributedToMegaDare(address) external view returns (bool)",
   "function getDareById(uint256 dareId) external view returns (string, uint256, address)",
   "function userDareId(address) external view returns (uint256)",
+  "function getUserDareInfo(address) external view returns (bool, uint256, string)",
   "event DareCreated(address indexed creator, uint256 indexed dareId, string description, uint256 amount)",
-  "event MegaDareContribution(address indexed contributor, uint256 amount, uint256 totalAmount)"
+  "event MegaDareContribution(address indexed contributor, uint256 amount, uint256 totalAmount)",
+  "event DareContribution(address indexed contributor, uint256 indexed dareId, uint256 amount, uint256 totalAmount)"
 ];
     
 // You would replace this with your actual contract address
@@ -26,6 +29,7 @@ let currentAccount = null;
 let endTimeTimestamp = 0;
 let countdownInterval = null;
 let dares = [];
+let hasCreatedDare = false;
 
 // Initialize the application when the page loads
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('connectWalletStatus').addEventListener('click', connectWallet);
   document.getElementById('createDareButton').addEventListener('click', handleCreateDare);
   document.getElementById('contributeMegaDareButton').addEventListener('click', handleContributeToMegaDare);
+  document.getElementById('showAllDaresButton').addEventListener('click', toggleDaresSection);
   
   //startTestMode();
   
@@ -115,47 +120,60 @@ function handleAccountsChanged(accounts) {
     
     // Load user participation status
     loadUserStatus();
+    
+    // Display all dares
+    displayAllDares();
   }
 }
 
 async function loadUserStatus() {
   try {
-    const hasParticipated = await contract.hasParticipated(currentAccount);
+    // Check if user has created a dare
+    hasCreatedDare = await contract.hasCreatedDare(currentAccount);
     const contributedToMegaDare = await contract.contributedToMegaDare(currentAccount);
     
-    document.getElementById('notParticipated').style.display = hasParticipated ? 'none' : 'block';
-    document.getElementById('hasParticipated').style.display = hasParticipated ? 'block' : 'none';
+    document.getElementById('notParticipated').style.display = hasCreatedDare ? 'none' : 'block';
+    document.getElementById('hasParticipated').style.display = hasCreatedDare ? 'block' : 'none';
     
-    if (hasParticipated) {
-      if (contributedToMegaDare) {
-        document.getElementById('yourMegaDare').style.display = 'block';
-        document.getElementById('yourDare').style.display = 'none';
-      } else {
+    if (hasCreatedDare) {
+      // Get user's dare details
+      const [hasCreated, dareId, description] = await contract.getUserDareInfo(currentAccount);
+      if (hasCreated) {
         document.getElementById('yourMegaDare').style.display = 'none';
         document.getElementById('yourDare').style.display = 'block';
         
-        // Get user's dare details
-        const dareId = await contract.userDareId(currentAccount);
-        const [description, amount, creator] = await contract.getDareById(dareId);
+        // Get full dare details to show amount
+        const [_, amount, __] = await contract.getDareById(dareId);
         
         document.getElementById('yourDareDescription').textContent = description;
         document.getElementById('yourDareAmount').textContent = `${ethers.utils.formatEther(amount)} ETH`;
       }
       
-      // Disable both forms
+      // Disable dare creation form
       document.getElementById('createDareButton').disabled = true;
-      document.getElementById('contributeMegaDareButton').disabled = true;
       document.getElementById('dareDescription').disabled = true;
       document.getElementById('dareEthAmount').disabled = true;
-      document.getElementById('megaDareEthAmount').disabled = true;
     } else {
-      // Enable both forms
+      // Enable dare creation form
       document.getElementById('createDareButton').disabled = false;
-      document.getElementById('contributeMegaDareButton').disabled = false;
       document.getElementById('dareDescription').disabled = false;
       document.getElementById('dareEthAmount').disabled = false;
-      document.getElementById('megaDareEthAmount').disabled = false;
     }
+    
+    // Mega Dare status message
+    if (contributedToMegaDare) {
+      document.getElementById('megaDareStatusMessage').textContent = "You've contributed to the Mega Dare!";
+      document.getElementById('megaDareStatusMessage').classList.remove('hidden');
+    } else {
+      document.getElementById('megaDareStatusMessage').classList.add('hidden');
+    }
+    
+    // Always enable contribution to Mega Dare
+    document.getElementById('contributeMegaDareButton').disabled = false;
+    document.getElementById('megaDareEthAmount').disabled = false;
+    
+    // Update the UI of all dares
+    updateDaresUI();
   } catch (error) {
     console.error("Error loading user status:", error);
     showStatus("Error loading your participation status", "error");
@@ -187,8 +205,13 @@ async function initializeDareInfo() {
     endTimeTimestamp = endTime.toNumber();
     startCountdown();
     
-    // Store the dares data but don't display them
+    // Store the dares data and display them
     await loadDaresData(dareCount);
+    
+    // If user is connected, display all dares
+    if (currentAccount) {
+      displayAllDares();
+    }
   } catch (error) {
     console.error("Error initializing dare info:", error);
     showStatus("Error loading challenge information", "error");
@@ -199,7 +222,7 @@ async function loadDaresData(dareCount) {
   // Clear previous dares
   dares = [];
   
-  // Just load the dares data without displaying
+  // Load all dares
   for (let i = 0; i < dareCount.toNumber(); i++) {
     try {
       const [description, amount, creator] = await contract.getDareById(i);
@@ -268,7 +291,7 @@ async function handleContributeToMegaDare() {
   }
   
   try {
-    // Disable button to prevent multiple clicks
+    // Disable button to prevent multiple clicks during transaction
     document.getElementById('contributeMegaDareButton').disabled = true;
     showStatus("Contributing to Mega Dare, please confirm the transaction...", "info");
     
@@ -287,6 +310,12 @@ async function handleContributeToMegaDare() {
     // Refresh data
     await initializeDareInfo();
     await loadUserStatus();
+    
+    // Reset the input field
+    document.getElementById('megaDareEthAmount').value = '';
+    
+    // Re-enable button
+    document.getElementById('contributeMegaDareButton').disabled = false;
   } catch (error) {
     console.error("Error contributing to Mega Dare:", error);
     showStatus("Error contributing to Mega Dare", "error");
@@ -295,6 +324,179 @@ async function handleContributeToMegaDare() {
     document.getElementById('contributeMegaDareButton').disabled = false;
   }
 }
+
+// Function to handle contributing to an existing dare
+async function handleContributeToExistingDare(dareId) {
+  const inputId = `contributeAmount-${dareId}`;
+  const ethAmount = document.getElementById(inputId).value;
+  
+  if (!ethAmount || parseFloat(ethAmount) <= 0) {
+    showStatus("Please enter a valid ETH amount", "error");
+    return;
+  }
+  
+  try {
+    // Get the dare info to check if it's the user's own dare
+    const [_, __, creator] = await contract.getDareById(dareId);
+    if (creator.toLowerCase() === currentAccount.toLowerCase()) {
+      showStatus("You cannot contribute to your own dare", "error");
+      return;
+    }
+    
+    // Disable button to prevent multiple clicks during transaction
+    document.getElementById(`contributeButton-${dareId}`).disabled = true;
+    showStatus(`Contributing to Dare #${dareId}, please confirm the transaction...`, "info");
+    
+    // Contribute to existing dare transaction
+    const tx = await contract.contributeToExistingDare(dareId, {
+      value: ethers.utils.parseEther(ethAmount)
+    });
+    
+    showStatus("Transaction submitted, waiting for confirmation...", "info");
+    
+    // Wait for transaction to be mined
+    await tx.wait();
+    
+    showStatus("Contributed to dare successfully!", "success");
+    
+    // Refresh data
+    await initializeDareInfo();
+    await loadUserStatus();
+    
+    // Reset the input field
+    document.getElementById(inputId).value = '';
+    
+    // Re-enable button
+    document.getElementById(`contributeButton-${dareId}`).disabled = false;
+  } catch (error) {
+    console.error(`Error contributing to dare #${dareId}:`, error);
+    showStatus("Error contributing to dare", "error");
+    
+    // Re-enable button
+    document.getElementById(`contributeButton-${dareId}`).disabled = false;
+  }
+}
+
+function updateDaresUI() {
+  // Disable contribution to user's own dare
+  if (hasCreatedDare && currentAccount) {
+    dares.forEach(dare => {
+      if (dare.creator.toLowerCase() === currentAccount.toLowerCase()) {
+        const button = document.getElementById(`contributeButton-${dare.id}`);
+        const input = document.getElementById(`contributeAmount-${dare.id}`);
+        if (button) button.disabled = true;
+        if (input) input.disabled = true;
+        if (button) button.title = "Cannot contribute to your own dare";
+      }
+    });
+  }
+}
+
+function displayAllDares() {
+  const allDaresSection = document.getElementById('allDaresSection');
+  const daresContainer = document.getElementById('daresContainer');
+  
+  if (!daresContainer || !allDaresSection) return;
+  
+  // Clear previous content
+  daresContainer.innerHTML = '';
+  
+  // If no dares, show message
+  if (dares.length === 0) {
+    const nodaresMessage = document.createElement('p');
+    nodaresMessage.className = 'text-center py-4 text-gray-400';
+    nodaresMessage.textContent = 'No dares have been created yet. Be the first!';
+    daresContainer.appendChild(nodaresMessage);
+    return;
+  }
+  
+  // Sort dares by amount (highest first)
+  const sortedDares = [...dares].sort((a, b) => b.amount.sub(a.amount));
+  
+  // Find the highest amount dare
+  const highestAmount = sortedDares[0].amount;
+  
+  // Create and add dare cards
+  sortedDares.forEach(dare => {
+    const dareCard = document.createElement('div');
+    dareCard.className = 'dare-card bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700';
+    
+    // Highlight the dare with highest amount
+    if (dare.amount.eq(highestAmount)) {
+      dareCard.className += ' border-2 border-yellow-500';
+    }
+    
+    // Format creator address
+    const abbreviatedCreator = `${dare.creator.slice(0, 6)}...${dare.creator.slice(-4)}`;
+    
+    // Check if this is the user's own dare
+    const isUserDare = currentAccount && dare.creator.toLowerCase() === currentAccount.toLowerCase();
+    const disableContribution = isUserDare || timeEnded;
+    
+    // Create card content
+    dareCard.innerHTML = `
+      <div class="flex justify-between items-start mb-4">
+        <span class="bg-gray-700 text-xs font-medium px-2.5 py-0.5 rounded">Dare #${dare.id}</span>
+        ${dare.amount.eq(highestAmount) ? '<span class="bg-yellow-500 text-black text-xs font-medium px-2.5 py-0.5 rounded">Leading</span>' : ''}
+        ${isUserDare ? '<span class="bg-pink-700 text-white text-xs font-medium px-2.5 py-0.5 rounded">Your Dare</span>' : ''}
+      </div>
+      <p class="text-lg mb-4">${dare.description}</p>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-400">Creator</span>
+        <span>${abbreviatedCreator}</span>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-gray-400">Amount</span>
+        <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">${dare.formattedAmount} ETH</span>
+      </div>
+      
+      <div class="mt-4 pt-4 border-t border-gray-700">
+        <div class="mb-2">
+          <label class="block text-gray-400 text-sm mb-1">Contribute (ETH)</label>
+          <div class="flex space-x-2">
+            <input 
+              type="number"
+              id="contributeAmount-${dare.id}"
+              placeholder="0.05"
+              min="0.001"
+              step="0.05"
+              class="contribute-dare-amount w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 text-sm"
+              ${disableContribution ? 'disabled' : ''}
+              ${isUserDare ? 'title="Cannot contribute to your own dare"' : ''}
+            >
+            <button 
+              id="contributeButton-${dare.id}"
+              class="contribute-dare-button btn-gradient px-4 py-2 rounded-lg font-medium text-white shadow-lg text-sm disabled:opacity-50"
+              onclick="handleContributeToExistingDare(${dare.id})"
+              ${disableContribution ? 'disabled' : ''}
+              ${isUserDare ? 'title="Cannot contribute to your own dare"' : ''}
+            >
+              Contribute
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    daresContainer.appendChild(dareCard);
+  });
+}
+
+function toggleDaresSection() {
+  const allDaresSection = document.getElementById('allDaresSection');
+  const showAllDaresButton = document.getElementById('showAllDaresButton');
+  
+  if (allDaresSection.classList.contains('hidden')) {
+    allDaresSection.classList.remove('hidden');
+    showAllDaresButton.textContent = 'Hide All Dares';
+    displayAllDares();
+  } else {
+    allDaresSection.classList.add('hidden');
+    showAllDaresButton.textContent = 'Show All Dares';
+  }
+}
+
+let timeEnded = false;
 
 function startCountdown() {
   // Show countdown element
@@ -311,18 +513,30 @@ function updateCountdown() {
   
   if (timeRemaining <= 0) {
     // Challenge period has ended
+    timeEnded = true;
     clearInterval(countdownInterval);
     document.getElementById('days').textContent = '00';
     document.getElementById('hours').textContent = '00';
     document.getElementById('minutes').textContent = '00';
     document.getElementById('seconds').textContent = '00';
     
-    // Disable forms
+    // Disable all forms
     document.getElementById('createDareButton').disabled = true;
     document.getElementById('contributeMegaDareButton').disabled = true;
     document.getElementById('dareDescription').disabled = true;
     document.getElementById('dareEthAmount').disabled = true;
     document.getElementById('megaDareEthAmount').disabled = true;
+    
+    // Disable all contribution buttons
+    const contributeButtons = document.querySelectorAll('.contribute-dare-button');
+    contributeButtons.forEach(button => {
+      button.disabled = true;
+    });
+    
+    const contributeInputs = document.querySelectorAll('.contribute-dare-amount');
+    contributeInputs.forEach(input => {
+      input.disabled = true;
+    });
     
     showStatus("Challenge period has ended", "info");
     return;
@@ -383,7 +597,8 @@ function updateUIOnDisconnect() {
   document.getElementById('connectedStatus').style.display = 'none';
 }
 
-
+// Make the function globally available for the HTML onclick
+window.handleContributeToExistingDare = handleContributeToExistingDare;
   
   // ############################################################
 
@@ -449,10 +664,3 @@ function updateUIOnDisconnect() {
     
     daresContainer.appendChild(dareCard);
   }
-
-
-
-// Listen for account changes
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', handleAccountsChanged);
-}
