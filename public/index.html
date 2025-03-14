@@ -43,38 +43,49 @@
         <p id="statusMessage" class="text-gray-300"></p>
       </div>
 
-      <!-- Intro Section -->
+      <!-- Intro Section - Updated Message -->
       <section class="mb-12 text-center">
         <h2 class="text-4xl font-bold mb-4">Will Your Dare Win?</h2>
         <p class="text-xl text-gray-300 max-w-3xl mx-auto">
           Bet Sepolia on your own dare or add to... 
           <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">The Mega Dare</h2>
           <strong>I HAVE TO DO WHICHEVER DARE HAS THE MOST ETH!</strong>
-          <br>
-          <br>
-          Scroll down to see the Leaderboard!
+          <br><br>
+          <span class="bg-gray-800 p-4 rounded-lg block mx-auto max-w-2xl">
+            All dares are kept secret until the end! 
+            <br>
+            Make YOUR dare count!
+          </span>
         </p>
       </section>
 
+      <!-- Total Dares Counter -->
+      <div class="text-center mb-8">
+        <div class="inline-block bg-gray-800 rounded-lg px-6 py-3 border border-gray-700">
+          <span class="text-gray-400">Total Dares Created:</span>
+          <span id="totalDaresCount" class="ml-2 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">0</span>
+        </div>
+      </div>
+
       <!-- Main Content -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Mega Dare Section -->
+        <!-- Mega Dare Section - Enhanced -->
         <div class="lg:col-span-1">
-          <div class="gradient-border p-6 h-full">
+          <div class="gradient-border p-6 h-full pulse-highlight">
             <h2 class="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">The Mega Dare</h2>
             
             <div class="mb-4">
-              <p id="megaDareDescription" class="text-lg mb-4">Loading...</p>
+              <p id="megaDareDescription" class="text-lg mb-4 font-medium">Loading...</p>
               
               <div class="mb-2 flex justify-between">
                 <span class="text-gray-400">Progress</span>
                 <span>
-                  <span id="megaDareAmount">0</span> / 
+                  <span id="megaDareAmount" class="font-bold">0</span> / 
                   <span id="megaDareThreshold">0</span> ETH
                 </span>
               </div>
               
-              <div class="mega-dare-progress mb-6">
+              <div class="mega-dare-progress mb-6 enhanced">
                 <div id="megaDareProgressBar" class="mega-dare-progress-bar" style="width: 0%"></div>
               </div>
             </div>
@@ -181,19 +192,6 @@
           </div>
         </div>
       </div>
-      
-      <!-- Top Dares Section -->
-      <section class="mt-12">
-        <h2 class="text-2xl font-bold mb-6 text-center">Top Dares</h2>
-        
-        <div id="nodaresMessage" class="text-center py-8 text-gray-400 hidden">
-          No dares have been created yet. Be the first!
-        </div>
-        
-        <div id="daresContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Dare cards will be dynamically inserted here -->
-        </div>
-      </section>
     </main>
 
     <footer class="mt-16 py-8 border-t border-gray-800">
@@ -201,8 +199,6 @@
         <p>The Mega Dare Corporation &copy; 2025</p>
       </div>
     </footer>
-  </div>
-
-  
+  </div>  
 </body>
 </html>

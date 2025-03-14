@@ -25,6 +25,17 @@ body {
   border-radius: 0.6rem;
   animation: animateGradient 3s linear infinite;
 }
+
+/* Enhanced highlight for the Mega Dare section */
+.pulse-highlight::before {
+  animation: pulseGradient 3s ease-in-out infinite, animateGradient 3s linear infinite;
+}
+
+@keyframes pulseGradient {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
     
 @keyframes animateGradient {
   0% { background-position: 0% 50%; }
@@ -49,12 +60,37 @@ body {
   border-radius: 8px;
   overflow: hidden;
 }
+
+/* Enhanced progress bar */
+.mega-dare-progress.enhanced {
+  height: 20px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
     
 .mega-dare-progress-bar {
   height: 100%;
   background: linear-gradient(90deg, #3333ff, #00ccff);
   border-radius: 8px;
   transition: width 0.5s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add shimmer effect to progress bar */
+.mega-dare-progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
     
 .dare-card {
