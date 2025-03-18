@@ -19,7 +19,7 @@ const contractABI = [
 ];
     
 // You would replace this with your actual contract address
-const contractAddress = "YOUR_CONTRACT_ADDRESS";
+const contractAddress = "0x5b0c862ca6fc9cf0310fbd74f59509f44812ba27";
     
 // App State
 let provider = null;
